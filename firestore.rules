@@ -1,0 +1,102 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return request.auth.uid == uid;
+    }
+
+    function isValidUser() {
+      return isAuthenticated() && request.auth.token.email_verified == true;
+    }
+
+    // ─── Users ──────────────────────────────────────────────────────────────
+    match /users/{uid} {
+      // Only the user themselves can read/write their profile
+      allow read: if isAuthenticated() && isOwner(uid);
+      allow create: if isAuthenticated() && isOwner(uid)
+        && request.resource.data.keys().hasAll(['email', 'createdAt']);
+      allow update: if isAuthenticated() && isOwner(uid)
+        // Prevent changing uid or email to another user's email
+        && request.resource.data.uid == uid;
+      allow delete: if false; // Soft delete only
+    }
+
+    // ─── Transactions ────────────────────────────────────────────────────────
+    match /transactions/{txId} {
+      allow read: if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
+
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.amount is number
+        && request.resource.data.amount > 0
+        && request.resource.data.type in ['credit', 'debit', 'cash', 'sms_imported']
+        && request.resource.data.keys().hasAll(['userId', 'amount', 'type', 'category', 'date', 'createdAt']);
+
+      allow update: if isAuthenticated()
+        && resource.data.userId == request.auth.uid
+        // Only allow soft-delete or editing own data
+        && request.resource.data.userId == request.auth.uid;
+
+      allow delete: if false; // Soft delete only via isDeleted flag
+    }
+
+    // ─── Loans ───────────────────────────────────────────────────────────────
+    match /loans/{loanId} {
+      allow read: if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
+
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.amount is number
+        && request.resource.data.amount > 0
+        && request.resource.data.type in ['lent', 'borrowed']
+        && request.resource.data.keys().hasAll(['userId', 'type', 'personName', 'phoneNumber', 'amount', 'dueDate', 'createdAt']);
+
+      allow update: if isAuthenticated()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == request.auth.uid;
+
+      allow delete: if false;
+    }
+
+    // ─── Reminders ────────────────────────────────────────────────────────────
+    match /reminders/{remId} {
+      allow read: if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
+
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.type in ['due_date', 'payment', 'collection']
+        && request.resource.data.keys().hasAll(['userId', 'title', 'type', 'dueDate', 'createdAt']);
+
+      allow update: if isAuthenticated()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == request.auth.uid;
+
+      allow delete: if false;
+    }
+
+    // ─── Notifications ────────────────────────────────────────────────────────
+    match /notifications/{notifId} {
+      allow read: if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
+      allow delete: if false;
+    }
+
+    // Deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

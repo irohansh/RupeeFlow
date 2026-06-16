@@ -1,0 +1,105 @@
+name: rupee_flow
+description: RupeeFlow - Personal Finance Tracker for Indian Users
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Firebase
+  firebase_core: ^2.27.1
+  firebase_auth: ^4.19.5
+  cloud_firestore: ^4.17.4
+  firebase_messaging: ^14.9.3
+  firebase_analytics: ^10.10.5
+
+  # Google Sign-In
+  google_sign_in: ^6.2.1
+
+  # State Management
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+
+  # Navigation
+  go_router: ^13.2.4
+
+  # Local Storage
+  flutter_secure_storage: ^9.0.0
+  shared_preferences: ^2.2.3
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+
+  # Biometric Auth
+  local_auth: ^2.2.0
+
+  # Notifications
+  flutter_local_notifications: ^17.1.2
+  timezone: ^0.9.4
+
+  # UI
+  flutter_svg: ^2.0.10+1
+  cached_network_image: ^3.3.1
+  shimmer: ^3.0.0
+  lottie: ^3.1.0
+  flutter_animate: ^4.5.0
+  gap: ^3.0.1
+
+  # Forms & Validation
+  reactive_forms: ^17.0.1
+
+  # Date/Time
+  intl: ^0.19.0
+
+  # SMS Detection (Android)
+  telephony: ^0.2.0
+
+  # Permission Handling
+  permission_handler: ^11.3.1
+
+  # Connectivity
+  connectivity_plus: ^6.0.3
+
+  # Utils
+  uuid: ^4.4.2
+  equatable: ^2.0.5
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.9.0
+  collection: ^1.18.0
+  logger: ^2.4.0
+
+  # Crypto for PIN
+  crypto: ^3.0.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  build_runner: ^2.4.9
+  freezed: ^2.5.2
+  json_serializable: ^6.8.0
+  riverpod_generator: ^2.4.0
+  hive_generator: ^2.0.1
+  custom_lint: ^0.6.4
+  riverpod_lint: ^2.3.10
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/animations/
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Inter-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Inter-Bold.ttf
+          weight: 700
